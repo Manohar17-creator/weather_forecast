@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="/styles/main.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Forecast</h1>
+        
+        <!-- Search Form -->
+        <form action="/weather" method="POST">
+            <input type="text" name="city" placeholder="Enter city name" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <% if (error) { %>
+            <p class="text-danger"><%= error %></p>
+        <% } else if (weather) { %>
+
+        <!-- Current Weather Section -->
+        <div class="weather-info">
+            <h2><%= weather %></h2>
+            <p>Temperature: <%= currentTemperature %></p>
+            <p>Humidity: <%= currentHumidity %></p>
+        </div>
+
+        <!-- Hourly Forecast -->
+        <div class="forecast-section">
+            <h3>Hourly Forecast</h3>
+            <div class="hourly-forecast">
+                <% hourlyForecast.forEach(hour => { %>
+                    <div class="hour-card">
+                        <p><%= hour.time %></p>
+                        <img src="https://openweathermap.org/img/wn/<%= hour.icon %>@2x.png" alt="Weather Icon">
+                        <p><%= hour.temperature %>°C</p>
+                        <p>Humidity: <%= hour.humidity %>%</p>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- 5-Day Forecast and Air Quality -->
+        <div class="forecast-air-container">
+            <!-- 5-Day Forecast -->
+            <div class="forecast-section">
+                <h3 class="section-headers">5-Day Forecast</h3>
+                <div class="weekly-forecast">
+                    <% weeklyForecast.forEach(day => { %>
+                        <div class="day-card">
+                            <p><%= day.date %></p>
+                            <img src="https://openweathermap.org/img/wn/<%= day.icon %>@2x.png" alt="Weather Icon">
+                            <p><%= day.temperature %>°C</p>
+                            <p>Humidity: <%= day.humidity %>%</p>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        
+            <!-- Air Quality -->
+            <div class="air-quality-section">
+            <% if (airQuality) { %>
+            <div class="air-quality-section">
+            <h3 class="section-headers">Current Air Quality</h3>   
+            <div class="air-quality-box">
+                <p>Air Quality Index: <%= airQuality.aqi %> 
+                    <% if (airQuality.aqi === 1) { %>(Good)<% } %>
+                    <% if (airQuality.aqi === 2) { %>(Fair)<% } %>
+                    <% if (airQuality.aqi === 3) { %>(Moderate)<% } %>
+                    <% if (airQuality.aqi === 4) { %>(Poor)<% } %>
+                    <% if (airQuality.aqi === 5) { %>(Very Poor)<% } %>
+                </p>
+                <p>PM2.5: <%= airQuality.components.pm2_5 %> μg/m³</p>
+                <p>PM10: <%= airQuality.components.pm10 %> μg/m³</p>
+            </div>
+            </div>
+            <% } %>            
+        </div>
+        
+        <% } %>
+    </div>
+</body>
+</html>
