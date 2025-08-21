@@ -3,7 +3,6 @@ import axios from "axios";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 
-
 dotenv.config();
 
 const app = express();
@@ -26,13 +25,11 @@ const formatDate = (date) => {
 app.get("/", (req, res) => {
   res.render("index", { 
     weather: null, 
-    temperature: null, 
-    humidity: null, 
     currentTemperature: null, 
     currentHumidity: null, 
     hourlyForecast: [], 
     weeklyForecast: [],
-    airQuality: null, // Added for air quality
+    airQuality: null,
     error: null 
   });
 });
@@ -48,8 +45,6 @@ app.post("/weather", async (req, res) => {
     if (geoResponse.data.results.length === 0) {
       return res.render("index", { 
         weather: null, 
-        temperature: null, 
-        humidity: null, 
         currentTemperature: null,
         currentHumidity: null,
         hourlyForecast: [], 
@@ -63,7 +58,6 @@ app.post("/weather", async (req, res) => {
     
     const currentWeatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather`, {
       params: { lat: lat, lon: lng, appid: WEATHER_API_KEY, units: "metric" }
-
     });
   
     const currentTemperature = currentWeatherResponse.data.main.temp;
@@ -71,16 +65,14 @@ app.post("/weather", async (req, res) => {
 
     const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/forecast`, {
       params: { lat: lat, lon: lng, appid: WEATHER_API_KEY, units: "metric" }
-
     });
 
-    // Add Air Quality API call
     const airQualityResponse = await axios.get(`https://api.openweathermap.org/data/2.5/air_pollution`, {
       params: { lat: lat, lon: lng, appid: WEATHER_API_KEY, units: "metric" }
     });
     const airQuality = {
-      aqi: airQualityResponse.data.list[0].main.aqi, // 1-5 scale (1=Good, 5=Very Poor)
-      components: airQualityResponse.data.list[0].components // Pollutant concentrations
+      aqi: airQualityResponse.data.list[0].main.aqi,
+      components: airQualityResponse.data.list[0].components
     };
 
     const hourlyForecast = weatherResponse.data.list.slice(0, 8).map(entry => {
@@ -131,7 +123,6 @@ app.post("/weather", async (req, res) => {
         });
       }
     });
-  
 
     res.render("index", { 
       weather: `Weather in ${city}: ${currentWeatherResponse.data.weather[0].description}`,
@@ -139,7 +130,7 @@ app.post("/weather", async (req, res) => {
       currentHumidity: `${currentHumidity}%`,
       hourlyForecast,
       weeklyForecast,
-      airQuality, // Added air quality data
+      airQuality,
       error: null 
     });
 
@@ -147,8 +138,6 @@ app.post("/weather", async (req, res) => {
     console.error("Weather API Error:", error.response ? error.response.data : error.message);
     res.render("index", { 
       weather: null, 
-      temperature: null, 
-      humidity: null, 
       currentTemperature: null,
       currentHumidity: null,
       hourlyForecast: [], 
