@@ -11,9 +11,11 @@ const port = 3000;
 const GEOCODING_API_KEY = process.env.GEOCODING_API_KEY;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
+app.set("views", path.join(process.cwd(), "views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.use(express.static(path.join(process.cwd(), "public")));
+
 
 const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, '0');
